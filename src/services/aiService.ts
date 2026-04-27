@@ -4,13 +4,53 @@
  */
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { SentimentResult } from "../types";
+import { SentimentResult, CaseStudyResult } from "../types";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
+export async function analyzeGraphImage(imageBuffer: ArrayBuffer, mimeType: string): Promise<CaseStudyResult> {
+  if (!process.env.GEMINI_API_KEY) {
+    return {
+      supportLevel: "70%",
+      resistanceLevel: "95%",
+      trend: "Simulated Bullish",
+      observation: "Please add GEMINI_API_KEY for real image analysis."
+    };
+  }
+
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const base64Data = btoa(
+      new Uint8Array(imageBuffer).reduce((data, byte) => data + String.fromCharCode(byte), "")
+    );
+
+    const imagePart = {
+      inlineData: {
+        data: base64Data,
+        mimeType
+      },
+    };
+
+    const prompt = `Analyze this productivity/performance index graph. 
+    1. Identify the 'Support Level' (the bottom threshold where performance usually bounces back).
+    2. Identify the 'Resistance Level' (the ceiling where performance plateaus).
+    3. Determine the overall trend.
+    4. Provide a 1-sentence technical observation.
+    Return a valid JSON object:
+    { "supportLevel": "string", "resistanceLevel": "string", "trend": "string", "observation": "string" }`;
+
+    const result = await model.generateContent([prompt, imagePart]);
+    const response = await result.response;
+    const jsonStr = response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(jsonStr);
+  } catch (error) {
+    console.error("Vision Analysis failed:", error);
+    throw error;
+  }
+}
+
 export async function analyzeFeedbackSentiment(text: string): Promise<SentimentResult> {
   if (!process.env.GEMINI_API_KEY) {
-    // Fallback if API key is not provided (mock simulation)
     const isNegative = text.toLowerCase().includes('slow') || text.toLowerCase().includes('error');
     return {
       sentiment: isNegative ? 'Negative' : 'Positive',

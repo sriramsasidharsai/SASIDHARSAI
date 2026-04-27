@@ -17,13 +17,15 @@ import {
   Github,
   Monitor,
   Menu,
-  X
+  X,
+  SearchCode
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { AnalysisDashboard } from './components/AnalysisDashboard.tsx';
 import { PredictionEngine } from './components/PredictionEngine.tsx';
 import { AcademicResourceHub } from './components/AcademicResourceHub.tsx';
+import { CaseStudyAnalyzer } from './components/CaseStudyAnalyzer.tsx';
 
 /** Utility for Tailwind class merging */
 function cn(...inputs: ClassValue[]) {
@@ -31,12 +33,13 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'predictor' | 'resources'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'predictor' | 'case-study' | 'resources'>('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const tabs = [
     { id: 'dashboard', label: 'Analytics Dashboard', icon: LayoutDashboard },
     { id: 'predictor', label: 'ML Prediction Engine', icon: BrainCircuit },
+    { id: 'case-study', label: 'Case Study Analyzer', icon: SearchCode },
     { id: 'resources', label: 'Project Resource Hub', icon: BookOpenText },
   ];
 
@@ -134,11 +137,13 @@ export default function App() {
             <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
               {activeTab === 'dashboard' && "Performance Analytics"}
               {activeTab === 'predictor' && "AI Task Forecaster"}
+              {activeTab === 'case-study' && "Case Study Analysis"}
               {activeTab === 'resources' && "Project Documentation"}
             </h1>
             <p className="text-slate-500 mt-2">
               {activeTab === 'dashboard' && "Real-time visualization of intern metrics and productivity benchmarks."}
               {activeTab === 'predictor' && "Predictive model simulation using ensemble learning heuristics."}
+              {activeTab === 'case-study' && "Technical analysis of graph support and resistance levels using AI Vision."}
               {activeTab === 'resources' && "Source code, dataset schemas, and implementation guides for submission."}
             </p>
           </div>
@@ -155,6 +160,7 @@ export default function App() {
         <section className="relative">
           {activeTab === 'dashboard' && <AnalysisDashboard />}
           {activeTab === 'predictor' && <PredictionEngine />}
+          {activeTab === 'case-study' && <CaseStudyAnalyzer />}
           {activeTab === 'resources' && <AcademicResourceHub />}
         </section>
       </main>

@@ -27,3 +27,10 @@ export interface SentimentResult {
   score: number;
   analysis: string;
 }
+
+export interface CaseStudyResult {
+  supportLevel: string;
+  resistanceLevel: string;
+  trend: string;
+  observation: string;
+}

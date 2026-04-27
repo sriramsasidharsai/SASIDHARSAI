@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Activity, Zap, MessageCircle, AlertCircle } from 'lucide-react';
+import { Activity, Zap, MessageCircle, AlertCircle, Sparkles, Cpu } from 'lucide-react';
 import { analyzeFeedbackSentiment } from '../services/aiService';
 import { SentimentResult } from '../types';
 
@@ -17,7 +17,6 @@ export function PredictionEngine() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const calculateProbability = () => {
-    // Simulated ML Logic based on the Python model's criteria
     const base = 50;
     const hourFactor = (hours - 30) * 1.5;
     const complexityPenalty = complexity * 4;
@@ -36,100 +35,122 @@ export function PredictionEngine() {
   const prob = calculateProbability();
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in slide-in-from-bottom duration-700">
-      <div className="lg:col-span-2 space-y-6">
-        <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <Zap className="text-amber-500 w-6 h-6" />
-            Parameter Input
-          </h3>
-          
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <div className="flex justify-between items-center text-sm">
-                <label className="font-semibold text-slate-700">Hours Worked / Week: {hours}</label>
-                <span className="text-slate-400">Standard 40h</span>
-              </div>
-              <input 
-                type="range" min="10" max="60" value={hours} 
-                onChange={(e) => setHours(Number(e.target.value))}
-                className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600"
-              />
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 animate-in slide-in-from-bottom duration-700">
+      {/* Parameter Input Bento */}
+      <div className="lg:col-span-7 bg-white p-8 rounded-[2rem] shadow-sm border border-slate-200">
+        <h3 className="text-xl font-black mb-8 flex items-center gap-3">
+          <div className="w-8 h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center">
+            <Zap className="w-5 h-5" />
+          </div>
+          Model Hyperparameters
+        </h3>
+        
+        <div className="space-y-10">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-bold text-slate-700 uppercase tracking-tight">Hours commitment / week</label>
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-black">{hours}H</span>
             </div>
+            <input 
+              type="range" min="10" max="60" value={hours} 
+              onChange={(e) => setHours(Number(e.target.value))}
+              className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+            />
+          </div>
 
-            <div className="space-y-4">
-              <div className="flex justify-between items-center text-sm">
-                <label className="font-semibold text-slate-700">Task Complexity Level: {complexity}</label>
-                <span className="text-slate-400 text-xs">Based on Jira/Story Points</span>
-              </div>
-              <input 
-                type="range" min="1" max="10" value={complexity} 
-                onChange={(e) => setComplexity(Number(e.target.value))}
-                className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600"
-              />
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <label className="text-sm font-bold text-slate-700 uppercase tracking-tight">Task Complexity Score</label>
+              <span className="px-3 py-1 bg-rose-50 text-rose-600 rounded-full text-xs font-black">LVL {complexity}</span>
             </div>
+            <input 
+              type="range" min="1" max="10" value={complexity} 
+              onChange={(e) => setComplexity(Number(e.target.value))}
+              className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+            />
+          </div>
 
-            <div className="space-y-4">
-              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                <MessageCircle className="w-4 h-4 text-slate-400" />
-                Work Log / Supervisor Feedback
-              </label>
+          <div className="space-y-4">
+            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+              <MessageCircle className="w-4 h-4" />
+              Supervisor Observations (AI Integration)
+            </label>
+            <div className="relative">
               <textarea 
-                placeholder="e.g., Intern was proactive but struggled with React hooks implementation..."
-                className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-indigo-500 transition-all text-sm h-32"
+                placeholder="Describe intern behavior or feedback..."
+                className="w-full p-5 rounded-2xl border-2 border-slate-100 bg-slate-50 focus:border-indigo-500 focus:ring-0 transition-all text-sm h-40 resize-none"
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
               />
               <button 
                 onClick={handleAIScan}
                 disabled={isAnalyzing || !feedback}
-                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-100 flex justify-center items-center gap-2"
+                className="absolute bottom-4 right-4 px-6 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-black transition-all flex items-center gap-2 disabled:opacity-50"
               >
-                {isAnalyzing ? "Processing AI Insight..." : "Scan with Gemini AI"}
+                {isAnalyzing ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-amber-400" />}
+                Analyze with Gemini
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="space-y-6">
-        <div className="bg-indigo-950 p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
-          <h3 className="text-indigo-200 text-sm font-medium mb-1">Completion Probability</h3>
-          <div className="text-6xl font-black mb-4 tracking-tighter">
-            {prob}<span className="text-2xl text-indigo-400">%</span>
+      <div className="lg:col-span-5 space-y-4">
+        {/* Result Bento */}
+        <div className="bg-indigo-600 p-8 rounded-[2rem] text-white shadow-xl relative overflow-hidden h-[300px] flex flex-col justify-between">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-3xl -mr-24 -mt-24"></div>
+          <div>
+            <h3 className="text-indigo-200 text-[10px] font-black uppercase tracking-widest mb-1">Completion Probability</h3>
+            <div className="text-7xl font-black tracking-tighter">
+              {prob}<span className="text-2xl text-indigo-300 ml-1">%</span>
+            </div>
           </div>
           
-          <div className="space-y-4 pt-4 border-t border-indigo-900">
-            <p className="text-sm text-indigo-100/70 leading-relaxed italic">
-              "Based on historical data from Edorient Technologies workflow samples, this intern is 
-              {Number(prob) > 70 ? ' likely to exceed' : ' currently facing some bottlenecks in'} project expectations."
+          <div className="border-t border-indigo-500 pt-4">
+            <p className="text-sm font-medium text-indigo-100 leading-snug">
+               Model predicts a <strong>{Number(prob) > 70 ? 'High' : 'Moderate'}</strong> likelihood of milestone completion based on current workload.
             </p>
-            
-            {sentiment && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`p-3 rounded-lg text-xs font-semibold ${
-                  sentiment.sentiment === 'Positive' ? 'bg-emerald-500/20 text-emerald-300' : 
-                  sentiment.sentiment === 'Negative' ? 'bg-rose-500/20 text-rose-300' : 'bg-slate-500/20 text-slate-300'
-                }`}
-              >
-                Sentiment: {sentiment.sentiment} ({Math.round(sentiment.score * 100)}%)
-                <div className="mt-1 font-normal opacity-70">{sentiment.analysis}</div>
-              </motion.div>
-            )}
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-amber-100 shadow-sm flex gap-4 items-start">
-          <AlertCircle className="w-6 h-6 text-amber-500 shrink-0" />
-          <div className="text-sm">
-            <h4 className="font-bold text-slate-900 mb-1">Observation Log</h4>
-            <p className="text-slate-500 leading-snug">Complexity scores above 7 require at least 45h/week for optimal completion.</p>
-          </div>
-        </div>
+        {/* Sentiment Insight Bento */}
+        <AnimatePresence mode="wait">
+          {sentiment ? (
+            <motion.div 
+              key="sentiment"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm flex items-center gap-4 h-[180px]"
+            >
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 ${
+                sentiment.sentiment === 'Positive' ? 'bg-emerald-50 text-emerald-600' : 
+                sentiment.sentiment === 'Negative' ? 'bg-rose-50 text-rose-600' : 'bg-slate-50 text-slate-600'
+              }`}>
+                <Cpu className="w-8 h-8" />
+              </div>
+              <div className="flex-grow">
+                <div className="flex justify-between items-start mb-1">
+                  <h4 className="font-black text-slate-900 tracking-tight">AI Sentiment Insight</h4>
+                  <span className={`text-[10px] font-black px-2 py-1 rounded uppercase ${
+                     sentiment.sentiment === 'Positive' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                  }`}>{sentiment.sentiment}</span>
+                </div>
+                <p className="text-xs text-slate-500 leading-relaxed italic line-clamp-2">"{sentiment.analysis}"</p>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="placeholder"
+              className="bg-slate-50 p-6 rounded-[2rem] border border-dashed border-slate-200 flex flex-col items-center justify-center text-center h-[180px]"
+            >
+              <AlertCircle className="w-8 h-8 text-slate-300 mb-2" />
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Awaiting AI input...</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
 }
+
