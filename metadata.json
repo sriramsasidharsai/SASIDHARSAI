@@ -1,0 +1,10 @@
+{
+  "name": "Internship Pulse AI",
+  "description": "An AI-powered system for analyzing internship performance, predicting task completion, and tracking productivity for IT/Software workflows.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "Performance Analytics",
+    "Task Prediction",
+    "Sentiment Analysis"
+  ]
+}
