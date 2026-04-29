@@ -1,10 +1,13 @@
 {
-  "name": "Internship Pulse AI",
-  "description": "An AI-powered system for analyzing internship performance, predicting task completion, and tracking productivity for IT/Software workflows.",
-  "requestFramePermissions": [],
+  "name": "VISION Pro Technicals",
+  "description": "Premium AI-powered chart analysis platform for exact Support & Resistance levels, trend detection, and institutional technical insights.",
+  "requestFramePermissions": [
+    "camera"
+  ],
   "majorCapabilities": [
-    "Performance Analytics",
-    "Task Prediction",
-    "Sentiment Analysis"
+    "High-Precision Chart OCR",
+    "Support & Resistance Scanning",
+    "Trend Detection Matrix",
+    "Institutional Trading Insights"
   ]
 }

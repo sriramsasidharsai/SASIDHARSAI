@@ -24,6 +24,15 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-slate-300 to-slate-500;
   }
+
+  .animate-spin-slow {
+    animation: spin 3s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Custom Scrollbar for Premium Feel */

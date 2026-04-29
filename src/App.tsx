@@ -28,10 +28,8 @@ import {
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, AnimatePresence } from 'motion/react';
-import { AnalysisDashboard } from './components/AnalysisDashboard.tsx';
-import { PredictionEngine } from './components/PredictionEngine.tsx';
-import { AcademicResourceHub } from './components/AcademicResourceHub.tsx';
-import { CaseStudyAnalyzer } from './components/CaseStudyAnalyzer.tsx';
+import { MarketAnalyzer } from './components/MarketAnalyzer.tsx';
+import { MarketInsights } from './components/MarketInsights.tsx';
 
 /** Utility for Tailwind class merging */
 function cn(...inputs: ClassValue[]) {
@@ -39,7 +37,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'predictor' | 'case-study' | 'resources'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'analyzer' | 'insights'>('analyzer');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -50,10 +48,8 @@ export default function App() {
   }, []);
 
   const tabs = [
-    { id: 'dashboard', label: 'Terminal', icon: LayoutDashboard },
-    { id: 'predictor', label: 'ML Engine', icon: BrainCircuit },
-    { id: 'case-study', label: 'Vision AI', icon: SearchCode },
-    { id: 'resources', label: 'Vault', icon: BookOpenText },
+    { id: 'analyzer', label: 'Vision Analyzer', icon: SearchCode },
+    { id: 'insights', label: 'Market Insights', icon: LayoutDashboard },
   ] as const;
 
   return (
@@ -62,7 +58,6 @@ export default function App() {
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[120px] rounded-full animate-pulse"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-emerald-600/5 blur-[120px] rounded-full"></div>
-        <div className="absolute top-[20%] right-[10%] w-[20%] h-[20%] bg-rose-600/5 blur-[100px] rounded-full"></div>
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-50 contrast-150"></div>
       </div>
 
@@ -77,8 +72,8 @@ export default function App() {
               <Zap className="w-6 h-6 text-white fill-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-black text-white tracking-tighter leading-none">QUANTUM</span>
-              <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest leading-none mt-1 italic">Intelligence</span>
+              <span className="text-xl font-black text-white tracking-tighter leading-none">VISION</span>
+              <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest leading-none mt-1 italic">Pro Technicals</span>
             </div>
           </div>
 
@@ -102,107 +97,31 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="p-2.5 bg-white/5 border border-white/5 rounded-xl text-slate-400 hover:text-white transition-colors relative">
-               <Bell className="w-5 h-5" />
-               <span className="absolute top-2 right-2 w-2 h-2 bg-indigo-500 rounded-full border-2 border-black"></span>
+            <button className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/20 hidden md:block">
+              Connect Exchange
             </button>
-            <div className="h-6 w-px bg-white/10 mx-1"></div>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 border border-white/10 flex items-center justify-center overflow-hidden cursor-pointer hover:border-indigo-500/50 transition-colors">
-               <User className="w-6 h-6 text-slate-400" />
-            </div>
+            {/* Mobile Menu Toggle */}
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden p-2 text-slate-400">
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
-
-          {/* Mobile Menu Toggle */}
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden p-2 text-slate-400">
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </div>
       </nav>
 
-      <main className="relative pt-32 px-6">
-        <div className="max-w-7xl mx-auto space-y-12">
-          
-          {/* Hero Section */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col md:flex-row items-center gap-12"
-          >
-            <div className="flex-1 space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] font-black uppercase tracking-[0.2em] text-indigo-400">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-                v4.0 Protocol Active
-              </div>
-              <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-[0.9] text-balance">
-                Next-Gen <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-indigo-200 to-indigo-500 drop-shadow-sm">Quantitative</span> Analysis
-              </h1>
-              <p className="text-lg text-slate-400 max-w-xl font-medium leading-relaxed">
-                Unlock professional-grade market insights using neural network forecasting and AI vision OCR price extraction. 
-                Designed for institutional velocity.
-              </p>
-              <div className="flex flex-wrap gap-4 pt-4">
-                <button 
-                  onClick={() => setActiveTab('case-study')}
-                  className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-indigo-500 hover:shadow-2xl hover:shadow-indigo-500/30 transition-all flex items-center gap-3"
-                >
-                  Analyze Chart <ChevronRight size={18} />
-                </button>
-                <div className="flex items-center gap-6 px-6 py-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
-                   <div className="flex flex-col">
-                      <span className="text-xl font-black text-white leading-none">98.4%</span>
-                      <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Accuracy</span>
-                   </div>
-                   <div className="w-px h-8 bg-white/10"></div>
-                   <div className="flex flex-col">
-                      <span className="text-xl font-black text-white leading-none">{'<'}2s</span>
-                      <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Latency</span>
-                   </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex-1 hidden md:block">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-indigo-500/20 blur-[80px] rounded-full group-hover:bg-indigo-500/30 transition-colors"></div>
-                <div className="relative bg-black/40 border border-white/10 p-4 rounded-[2.5rem] backdrop-blur-2xl shadow-3xl overflow-hidden">
-                   <div className="aspect-[4/3] bg-slate-900/50 rounded-[2rem] border border-white/5 flex flex-col items-center justify-center text-center p-8 relative overflow-hidden">
-                      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_10%_20%,rgba(99,102,241,0.1),transparent_50%)]"></div>
-                      <TrendingUp className="w-20 h-20 text-indigo-500/40 mb-4" />
-                      <div className="space-y-2">
-                        <div className="h-2 w-32 bg-white/10 rounded-full mx-auto"></div>
-                        <div className="h-2 w-24 bg-white/5 rounded-full mx-auto"></div>
-                      </div>
-                      <div className="mt-8 p-3 bg-white/5 border border-white/5 rounded-xl flex items-center gap-3 backdrop-blur-md">
-                         <div className="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center text-emerald-400">
-                           <ShieldCheck size={16} />
-                         </div>
-                         <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Secure Terminal Enforced</span>
-                      </div>
-                   </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
-
-          {/* Tab Content */}
-          <section className="min-h-[600px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.3 }}
-              >
-                {activeTab === 'dashboard' && <AnalysisDashboard />}
-                {activeTab === 'predictor' && <PredictionEngine />}
-                {activeTab === 'case-study' && <CaseStudyAnalyzer />}
-                {activeTab === 'resources' && <AcademicResourceHub />}
-              </motion.div>
-            </AnimatePresence>
-          </section>
+      <main className="relative pt-32 px-6 pb-20">
+        <div className="max-w-7xl mx-auto">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              {activeTab === 'analyzer' && <MarketAnalyzer />}
+              {activeTab === 'insights' && <MarketInsights />}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
 

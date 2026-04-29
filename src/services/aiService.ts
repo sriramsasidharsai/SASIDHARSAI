@@ -31,10 +31,8 @@ export async function analyzeGraphImage(imageBuffer: ArrayBuffer, mimeType: stri
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const base64Data = btoa(
-      new Uint8Array(imageBuffer).reduce((data, byte) => data + String.fromCharCode(byte), "")
-    );
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const base64Data = Buffer.from(imageBuffer).toString("base64");
 
     const imagePart = {
       inlineData: {
@@ -43,51 +41,52 @@ export async function analyzeGraphImage(imageBuffer: ArrayBuffer, mimeType: stri
       },
     };
 
-    const prompt = `Act as a Professional High-Frequency Trading Analyst. Analyze this chart image (likely NIFTY/BANKNIFTY or Stocks).
+    const prompt = `Act as an Elite Institutional Trading OCR v4. Analyze this market chart image.
     
-    TASKS:
-    1. OCR Calibration: Scan the vertical Y-axis to read visible price values.
-    2. Precision Extraction: 
-       - currentPrice: Identify the latest market price.
-       - supportLevels: Find EXACT numeric prices where bulls defend (swing lows, wicks).
-       - resistanceLevels: Find EXACT numeric prices where bears defend (swing highs, rejection).
-       - breakoutLevel: Identify the key level where a trend shift occurs.
-    3. Structural Analysis:
-       - Detect Trend: 'Uptrend', 'Downtrend', or 'Sideways' (volatility contraction).
-       - Trade Bias: Recommend 'Buy', 'Sell', or 'Wait' based on proximity to levels.
-    4. Commentary: Provide a professional insight and summary.
+    CRITICAL OBJECTIVES:
+    1. OCR Scan System: Extract precise numeric values from Y-axis price scales.
+    2. Identification: 
+       - currentPrice: Extract the current ticker price.
+       - supportLevels: Detect exact Support 1 and Support 2 price levels where prices bounced or consolidated.
+       - resistanceLevels: Detect exact Resistance 1 and Resistance 2 price levels where prices faced rejection or supply.
+       - breakoutLevel: Find the strongest breakout/breakdown level nearby.
+    3. Technical Matrix:
+       - Trend: Categorize as 'Uptrend', 'Downtrend', or 'Sideways'.
+       - Trade Bias: Conclude as 'Buy', 'Sell', or 'Neutral'.
+    4. Intelligence Output: 
+       - Provide a high-precision trading insight (Alpha).
+       - Provide a technical observation summary.
 
-    FORMAT RULES:
-    - Return ONLY valid JSON.
-    - Prices must be strings for precision.
-    - Confidence is a number between 0 and 1.
+    OUTPUT GUIDELINES:
+    - Return ONLY a JSON object.
+    - NO Markdown markers.
+    - Prices must be strings for floating point integrity in display.
 
     JSON SCHEMA:
     {
       "currentPrice": "string",
       "supportLevels": [
-        { "price": "string", "confidence": number, "reason": "string" }
+        { "price": "string", "confidence": number (0.0-1.0), "reason": "string" }
       ],
       "resistanceLevels": [
-        { "price": "string", "confidence": number, "reason": "string" }
+        { "price": "string", "confidence": number (0.0-1.0), "reason": "string" }
       ],
       "trend": "Uptrend" | "Downtrend" | "Sideways",
       "breakoutLevel": "string",
-      "tradeBias": "Buy" | "Sell" | "Wait",
+      "tradeBias": "Buy" | "Sell" | "Neutral",
       "tradingInsight": "string",
-      "observation": "short technical note"
+      "observation": "string"
     }`;
 
     const result = await model.generateContent([prompt, imagePart]);
-    const response = await result.response;
-    const text = response.text();
+    const text = result.response.text();
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Invalid response format from AI Vision model.");
+    if (!jsonMatch) throw new Error("Vision Engine: Matrix Parse Failure");
     
     const parsed = JSON.parse(jsonMatch[0]);
     return {
       ...parsed,
-      id: crypto.randomUUID(),
+      id: Math.random().toString(36).substr(2, 9),
       timestamp: Date.now()
     };
   } catch (error) {
