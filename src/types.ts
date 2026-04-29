@@ -28,9 +28,17 @@ export interface SentimentResult {
   analysis: string;
 }
 
+export interface PriceLevel {
+  price: string;
+  confidence: number;
+  reason: string;
+}
+
 export interface CaseStudyResult {
-  supportLevel: string;
-  resistanceLevel: string;
-  trend: string;
+  supportLevels: PriceLevel[];
+  resistanceLevels: PriceLevel[];
+  trend: 'Uptrend' | 'Downtrend' | 'Sideways';
+  breakoutLevel: string;
+  tradingInsight: string;
   observation: string;
 }
