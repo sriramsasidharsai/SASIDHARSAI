@@ -11,17 +11,21 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 export async function analyzeGraphImage(imageBuffer: ArrayBuffer, mimeType: string): Promise<CaseStudyResult> {
   if (!process.env.GEMINI_API_KEY) {
     return {
+      id: "mock_" + Date.now(),
+      timestamp: Date.now(),
+      currentPrice: "23,875.40",
       supportLevels: [
-        { price: "23,820", confidence: 0.9, reason: "Recent swing low / triple bottom" },
-        { price: "23,760", confidence: 0.85, reason: "Major accumulation zone" }
+        { price: "23,820.00", confidence: 0.95, reason: "Strong demand zone / visible consolidation" },
+        { price: "23,760.00", confidence: 0.88, reason: "Previous major breakout point" }
       ],
       resistanceLevels: [
-        { price: "23,910", confidence: 0.92, reason: "Multi-touch rejection area" },
-        { price: "23,980", confidence: 0.8, reason: "Visible gap fill resistance" }
+        { price: "23,910.50", confidence: 0.93, reason: "Multi-candle rejection / heavy supply" },
+        { price: "23,980.00", confidence: 0.82, reason: "Gap fill target / technical ceiling" }
       ],
       trend: "Uptrend",
-      breakoutLevel: "23,925",
-      tradingInsight: "Price is testing the immediate resistance cluster. A sustained breakout above 23,925 could invite fresh buying interest towards the 24k psychological mark.",
+      breakoutLevel: "23,925.00",
+      tradeBias: "Buy",
+      tradingInsight: "Price is maintaining structure above the support cluster. A volume-backed move above 23,925 confirms bull dominance for 24k targets.",
       observation: "Simulated analysis. Please connect a valid Gemini API key for real-time price extraction."
     };
   }
@@ -39,33 +43,53 @@ export async function analyzeGraphImage(imageBuffer: ArrayBuffer, mimeType: stri
       },
     };
 
-    const prompt = `Act as a Professional Financial Technical Analyst. Analyze this candlestick chart image.
-    1. Read the Y-Axis price labels/values to calibrate the scale.
-    2. Identify major Support and Resistance levels. Provide EXACT numeric price values based on your reading of the chart.
-    3. Detect Trend (Uptrend, Downtrend, or Sideways).
-    4. Pinpoint the most significant Breakout Level.
-    5. Provide a professional Trading Insight.
+    const prompt = `Act as a Professional High-Frequency Trading Analyst. Analyze this chart image (likely NIFTY/BANKNIFTY or Stocks).
+    
+    TASKS:
+    1. OCR Calibration: Scan the vertical Y-axis to read visible price values.
+    2. Precision Extraction: 
+       - currentPrice: Identify the latest market price.
+       - supportLevels: Find EXACT numeric prices where bulls defend (swing lows, wicks).
+       - resistanceLevels: Find EXACT numeric prices where bears defend (swing highs, rejection).
+       - breakoutLevel: Identify the key level where a trend shift occurs.
+    3. Structural Analysis:
+       - Detect Trend: 'Uptrend', 'Downtrend', or 'Sideways' (volatility contraction).
+       - Trade Bias: Recommend 'Buy', 'Sell', or 'Wait' based on proximity to levels.
+    4. Commentary: Provide a professional insight and summary.
 
-    Return ONLY a valid JSON object:
+    FORMAT RULES:
+    - Return ONLY valid JSON.
+    - Prices must be strings for precision.
+    - Confidence is a number between 0 and 1.
+
+    JSON SCHEMA:
     {
+      "currentPrice": "string",
       "supportLevels": [
-        { "price": "string", "confidence": number (0-1), "reason": "string" }
+        { "price": "string", "confidence": number, "reason": "string" }
       ],
       "resistanceLevels": [
-        { "price": "string", "confidence": number (0-1), "reason": "string" }
+        { "price": "string", "confidence": number, "reason": "string" }
       ],
       "trend": "Uptrend" | "Downtrend" | "Sideways",
       "breakoutLevel": "string",
+      "tradeBias": "Buy" | "Sell" | "Wait",
       "tradingInsight": "string",
-      "observation": "technical summary"
+      "observation": "short technical note"
     }`;
 
     const result = await model.generateContent([prompt, imagePart]);
     const response = await result.response;
     const text = response.text();
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Invalid format from AI");
-    return JSON.parse(jsonMatch[0]);
+    if (!jsonMatch) throw new Error("Invalid response format from AI Vision model.");
+    
+    const parsed = JSON.parse(jsonMatch[0]);
+    return {
+      ...parsed,
+      id: crypto.randomUUID(),
+      timestamp: Date.now()
+    };
   } catch (error) {
     console.error("Vision Analysis failed:", error);
     throw error;

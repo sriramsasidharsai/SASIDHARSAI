@@ -35,10 +35,15 @@ export interface PriceLevel {
 }
 
 export interface CaseStudyResult {
+  id: string;
+  timestamp: number;
+  currentPrice?: string;
   supportLevels: PriceLevel[];
   resistanceLevels: PriceLevel[];
   trend: 'Uptrend' | 'Downtrend' | 'Sideways';
   breakoutLevel: string;
+  tradeBias: 'Buy' | 'Sell' | 'Wait';
   tradingInsight: string;
   observation: string;
+  imageUrl?: string;
 }
